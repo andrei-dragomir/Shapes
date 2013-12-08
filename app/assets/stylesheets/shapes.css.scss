@@ -1,3 +1,12 @@
 // Place all the styles related to the Shapes controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+#canvas-container {
+	float: left;
+	width: 650px;
+	margin-right: 20px;
+}
+#shapes-canvas {
+	border: 4px dashed yellow;
+}

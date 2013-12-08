@@ -1,31 +1,51 @@
 <h1>Listing shapes</h1>
 
+<div id="canvas-container">
+	<canvas id="shapes-canvas" width="640" height="480"></canvas>
+</div>
 <table>
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
+	<thead>
+		<tr>
+			<th>Type</th>
+			<th>X</th>
+			<th>Y</th>
+			<th>Radius</th>
+			<th>Dimensions</th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</thead>
 
-  <tbody>
-    <% @shapes.each do |shape| %>
-    <%= shape.inspect %>
-      <tr>
-        <td><%= shape.type %></td>
-        <td><%= shape.x %></td>
-        <td><%= shape.y %></td>
-        <td><%= shape.type == "Circle" ? shape.radius : "#{shape.width}x#{shape.height}" %></td>
+	<tbody>
+		<% @shapes.each do |shape| %>
+			<tr>
+				<td><%= shape.type %></td>
+				<td><%= shape.x %></td>
+				<td><%= shape.y %></td>
+				<td><%= shape.radius if shape.type == "Circle" %></td>
+				<td><%= "#{shape.width} x #{shape.height}" if shape.type == "Rectangle" %></td>
 
-        <td><%= link_to 'Show', shape %></td>
-        <td><%= link_to 'Edit', edit_shape_path(shape) %></td>
-        <td><%= link_to 'Destroy', shape, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
+				<td><%= link_to 'Show', shape %></td>
+				<td><%= link_to 'Edit', edit_shape_path(shape) %></td>
+				<td><%= link_to 'Destroy', shape, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+			</tr>
+		<% end %>
+	</tbody>
 </table>
 
 <br>
 
+<%= render 'form', type: "Circle" %>
+<%= render 'form', type: "Rectangle" %>
+
 <%= link_to 'New Shape', new_shape_path %>
+
+
+
+<% content_for :javascripts do %>
+	<%= javascript_include_tag "jquery" %>
+	<%= javascript_include_tag "lib/underscore-min" %>
+	<%= javascript_include_tag "lib/backbone-min" %>
+	<%= javascript_include_tag "shapes" %>
+<% end %> 

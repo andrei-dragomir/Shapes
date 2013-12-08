@@ -10,5 +10,7 @@
 
 <%= yield %>
 
+<%= javascript_include_tag "jquery", "data-turbolinks-track" => true %>
+<%= yield :javascripts %>
 </body>
 </html>

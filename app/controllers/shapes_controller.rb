@@ -5,6 +5,7 @@ class ShapesController < ApplicationController
   # GET /shapes.json
   def index
     @shapes = Shape.all
+    @shape = Shape.new
   end
 
   # GET /shapes/1
