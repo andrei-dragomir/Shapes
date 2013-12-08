@@ -10,3 +10,32 @@
 #shapes-canvas {
 	border: 4px dashed yellow;
 }
+
+#shapes {
+	margin: 0 0 40px;
+	padding: 0;
+	overflow: hidden;
+}
+.shape {
+	border-bottom: 1px dotted #f1f1f1;
+	cursor: pointer;
+	padding: 3px 6px;
+
+	&:hover {
+		background: darken(white, 5%);
+	}
+}
+
+form {
+	float: left;
+	margin-right: 30px;
+
+	label {
+		display: inline-block;
+		width: 100px;
+		text-align: right;
+	}
+	input[type=submit] {
+		margin-left: 110px;
+	}
+}

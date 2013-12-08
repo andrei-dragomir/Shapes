@@ -3,38 +3,19 @@
 <div id="canvas-container">
 	<canvas id="shapes-canvas" width="640" height="480"></canvas>
 </div>
-<table>
-	<thead>
-		<tr>
-			<th>Type</th>
-			<th>X</th>
-			<th>Y</th>
-			<th>Radius</th>
-			<th>Dimensions</th>
-			<th></th>
-			<th></th>
-			<th></th>
-		</tr>
-	</thead>
 
-	<tbody>
-		<% @shapes.each do |shape| %>
-			<tr>
-				<td><%= shape.type %></td>
-				<td><%= shape.x %></td>
-				<td><%= shape.y %></td>
-				<td><%= shape.radius if shape.type == "Circle" %></td>
-				<td><%= "#{shape.width} x #{shape.height}" if shape.type == "Rectangle" %></td>
+<% #link_to 'Destroy', shape, method: :delete, data: { confirm: 'Are you sure?' } %>
 
-				<td><%= link_to 'Show', shape %></td>
-				<td><%= link_to 'Edit', edit_shape_path(shape) %></td>
-				<td><%= link_to 'Destroy', shape, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-			</tr>
-		<% end %>
-	</tbody>
-</table>
+<script type="text/template" id="circle-template">
+	<strong>[%= type %]</strong> (<span>[%= x %]<span>, <span>[%= y %]</span>) Radius: [%= radius %]
+</script>
+<script type="text/template" id="rectangle-template">
+	<strong>[%= type %]</strong> (<span>[%= x %]<span>, <span>[%= y %]</span>) Dimensions: [%= width %]x[%= height %]
+</script>
 
-<br>
+<ol id="shapes">
+	
+</ol>
 
 <%= render 'form', type: "Circle" %>
 <%= render 'form', type: "Rectangle" %>
