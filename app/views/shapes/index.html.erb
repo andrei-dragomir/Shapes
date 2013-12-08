@@ -11,7 +11,13 @@
 
   <tbody>
     <% @shapes.each do |shape| %>
+    <%= shape.inspect %>
       <tr>
+        <td><%= shape.type %></td>
+        <td><%= shape.x %></td>
+        <td><%= shape.y %></td>
+        <td><%= shape.type == "Circle" ? shape.radius : "#{shape.width}x#{shape.height}" %></td>
+
         <td><%= link_to 'Show', shape %></td>
         <td><%= link_to 'Edit', edit_shape_path(shape) %></td>
         <td><%= link_to 'Destroy', shape, method: :delete, data: { confirm: 'Are you sure?' } %></td>
