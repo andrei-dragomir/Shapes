@@ -1,4 +1,4 @@
-<%= form_for(@shape) do |f| %>
+<%= form_for @shape, html: { class: "form-new-#{type.downcase}" } do |f| %>
 	<% if @shape.errors.any? %>
 		<div id="error_explanation">
 			<h2><%= pluralize(@shape.errors.count, "error") %> prohibited this shape from being saved:</h2>
@@ -14,28 +14,28 @@
 	<div class="fields">
 		<div>
 			<%= f.label :x %>
-			<%= f.text_field :x %>
+			<%= f.text_field :x, class: 'x' %>
 		</div>
 		<div>
 			<%= f.label :y %>
-			<%= f.text_field :y %>
+			<%= f.text_field :y, class: 'y' %>
 		</div>
 		<% if type == "Circle" %>
 		<div>
 			<%= f.label :radius %>
-			<%= f.text_field :radius %>
+			<%= f.text_field :radius, class: 'radius' %>
 		</div>
 		<% elsif type == "Rectangle" %>
 		<div>
 			<%= f.label :width %>
-			<%= f.text_field :width %>
+			<%= f.text_field :width, class: 'width' %>
 		</div>
 		<div>
 			<%= f.label :height %>
-			<%= f.text_field :height %>
+			<%= f.text_field :height, class: 'height' %>
 		</div>
 		<% end %>
-		<div><%= f.hidden_field :type, value: type %></div>
+		<div><%= f.hidden_field :type, class: 'type', value: type %></div>
 	</div>
 
 	<div class="actions">

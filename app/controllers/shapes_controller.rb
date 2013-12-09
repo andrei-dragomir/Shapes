@@ -26,6 +26,7 @@ class ShapesController < ApplicationController
   # POST /shapes.json
   def create
     @shape = Shape.new(shape_params)
+    logger.debug shape_params.inspect
 
     respond_to do |format|
       if @shape.save

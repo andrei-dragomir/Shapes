@@ -27,6 +27,10 @@ class Shape extends Backbone.Model
 		height: null
 		type: null
 
+	# override toJSON to match Rails namespaced JSON approach
+	# toJSON: ->
+	# 	shape: _.clone( @attributes )
+
 
 class ShapesCollection extends Backbone.Collection
 	model: Shape
@@ -76,16 +80,21 @@ class ShapeView extends Backbone.View
 
 	refresh: ->
 		@render()
-		vent.trigger 'redraw', @model
-		
+		vent.trigger 'redraw', @model	
 
 
 
 class AppView extends Backbone.View
 
+	events:
+		'submit .form-new-circle': 'createCircle'
+		'submit .form-new-rectangle': 'createRectangle'
+
 	initialize: ->
 		@shapesCollection = new ShapesCollection()
 		@shapesContainer = @$('#shapes')
+		@formCircle = @$('.form-new-circle')
+		@formRectangle = @$('.form-new-rectangle')
 
 		@listenTo @shapesCollection, 'add', @renderShape
 
@@ -96,12 +105,30 @@ class AppView extends Backbone.View
 		@shapesContainer.append shapeView.render().el
 		shapeView.draw()
 
+	createShape: (form) ->
+		formData = {}
+		form.find('input:text').each ->
+			prop = @className
+			formData[ prop ] = ~~@value
+		formData['type'] = form.find('input.type').val()
+		@shapesCollection.create formData, wait: true
+
+	createCircle: (e) ->
+		e.preventDefault()
+		@createShape @formCircle
+
+	createRectangle: (e) ->
+		e.preventDefault()
+		@createShape @formRectangle
+		
+
 
 class CanvasView extends Backbone.View
 
 	tagName: 'canvas'
 
 	constructor: (options) ->
+		# options are not auto-attached anymore since Backbone 1.1
 		@options = options || {}
 		super
 
