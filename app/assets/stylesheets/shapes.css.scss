@@ -1,13 +1,14 @@
-// Place all the styles related to the Shapes controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
 
-#canvas-container {
+#original-canvas-container {
 	float: left;
 	width: 650px;
 	margin-right: 20px;
 }
-#shapes-canvas {
+#scaled-canvas-container {
+	clear: both;
+	padding-top: 40px;
+}
+canvas {
 	border: 4px dashed yellow;
 }
 
@@ -23,6 +24,12 @@
 
 	&:hover {
 		background: darken(white, 5%);
+
+		.info:after {
+			content: 'Click to edit';
+			margin-left: 20px;
+			font-size: 11px;
+		}
 	}
 	form {
 		display: none;

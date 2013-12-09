@@ -99,11 +99,25 @@ class AppView extends Backbone.View
 
 class CanvasView extends Backbone.View
 
+	tagName: 'canvas'
+
+	constructor: (options) ->
+		@options = options || {}
+		super
+
 	initialize: ->
 		@context = @el.getContext '2d'
 		@color = 'blue'
 		@highlightColor = 'red'
 		@context.lineWidth = 1.5
+		originalWidth = 640
+		originalHeight = 480
+
+		@ratio = @options.ratio || 1
+
+		@$el.attr 
+			width: @ratio * originalWidth
+			height: @ratio * originalHeight
 
 		@listenTo vent, 'draw', @drawShape
 		@listenTo vent, 'highlight', @highlightShape
@@ -111,9 +125,17 @@ class CanvasView extends Backbone.View
 
 	drawShape: (shape, fill = false) ->
 		if shape.get('type') is 'Circle' 
-			@circle shape.get('x'), shape.get('y'), shape.get('radius'), fill
+			@circle shape.get('x') * @ratio, shape.get('y') * @ratio, shape.get('radius') * @ratio, fill
 		else
-			@rectangle shape.get('x'), shape.get('y'), shape.get('width'), shape.get('height'), fill
+			@rectangle shape.get('x') * @ratio, shape.get('y') * @ratio, shape.get('width') * @ratio, shape.get('height') * @ratio, fill
+
+	clearShape: (shape) ->
+		@context.lineWidth = 3.5
+		if shape.get('type') is 'Circle' 
+			@clearCircle shape.previous('x') * @ratio, shape.previous('y') * @ratio, shape.previous('radius') * @ratio
+		else
+			@clearRectangle shape.previous('x') * @ratio, shape.previous('y') * @ratio, shape.previous('width') * @ratio, shape.previous('height') * @ratio
+		@context.lineWidth = 1.5
 
 	redrawShape: (shape) ->
 		@clearShape shape
@@ -121,14 +143,6 @@ class CanvasView extends Backbone.View
 
 	highlightShape: (shape) ->
 		@drawShape shape, true
-
-	clearShape: (shape) ->
-		@context.lineWidth = 3.5
-		if shape.get('type') is 'Circle' 
-			@clearCircle shape.previous('x'), shape.previous('y'), shape.previous('radius')
-		else
-			@clearRectangle shape.previous('x'), shape.previous('y'), shape.previous('width'), shape.previous('height')
-		@context.lineWidth = 1.5
 
 	circle: (x, y, radius, fill = false) ->
 		@context.beginPath()
@@ -169,5 +183,18 @@ class CanvasView extends Backbone.View
 		@context.stroke()
 
 
+scaledCanvasContainer = $('#scaled-canvas-container')
+originalCanvasContainer = $('#original-canvas-container')
+
+# create canvases of different sizes
+canvasView = new CanvasView
+mediumCanvasView = new CanvasView ratio: 2
+largeCanvasView = new CanvasView ratio: 10
+
+# insert canvases into the DOM
+originalCanvasContainer.append canvasView.render().el
+scaledCanvasContainer.append '<h2>2x</h2>', mediumCanvasView.render().el
+scaledCanvasContainer.append '<h2>10x</h2>', largeCanvasView.render().el
+
+# init the interface and fetch shapes from the server
 appView = new AppView el: 'body'
-canvasView = new CanvasView el: '#shapes-canvas'
