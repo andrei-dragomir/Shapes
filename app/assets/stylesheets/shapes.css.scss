@@ -18,7 +18,7 @@ canvas {
 	overflow: hidden;
 }
 .shape {
-	border-bottom: 1px dotted #f1f1f1;
+	border-bottom: 1px dotted lighten(black, 15%);
 	cursor: pointer;
 	padding: 3px 6px;
 
@@ -28,12 +28,18 @@ canvas {
 		.info:after {
 			content: 'Click to edit';
 			margin-left: 20px;
-			font-size: 11px;
+			float: right;
+			color: darkgray;
 		}
 	}
 	form {
 		display: none;
 		float: none;
+	}
+	.delete {
+		color: desaturate(red, 10%);
+		margin-left: 20px;
+		font-size: 11px;
 	}
 }
 

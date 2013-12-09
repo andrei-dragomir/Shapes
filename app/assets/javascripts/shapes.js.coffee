@@ -48,9 +48,11 @@ class ShapeView extends Backbone.View
 		'mouseleave': 'draw'
 		'click .info': 'toggleForm'
 		'submit form': 'update'
+		'click .delete': 'destroy'
 
 	initialize: ->
 		@listenTo @model, 'change', @refresh
+		@listenTo @model, 'destroy', @removeShape
 
 	render: ->
 		template = if @model.get('type') is 'Circle' then @circleTemplate else @rectangleTemplate
@@ -76,7 +78,13 @@ class ShapeView extends Backbone.View
 			formData[ prop ] = ~~@value if model.get(prop)? and @value != model.get(prop)
 		@model.save formData, wait: true
 
-	destroy: ->
+	destroy: (e) ->
+		e.preventDefault()
+		@model.destroy wait: true
+
+	removeShape: ->
+		vent.trigger 'clear', @model
+		@remove()
 
 	refresh: ->
 		@render()
@@ -149,6 +157,7 @@ class CanvasView extends Backbone.View
 		@listenTo vent, 'draw', @drawShape
 		@listenTo vent, 'highlight', @highlightShape
 		@listenTo vent, 'redraw', @redrawShape
+		@listenTo vent, 'clear', @clearShape
 
 	drawShape: (shape, fill = false) ->
 		if shape.get('type') is 'Circle' 
