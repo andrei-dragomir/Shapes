@@ -1,0 +1,31 @@
+<script type="text/template" id="rectangle-template">
+	
+	<div class="info">
+		<strong>[%= type %]</strong> (<span>[%= x %]<span>, <span>[%= y %]</span>) Dimensions: [%= width %]x[%= height %]
+	</div>
+
+	<%= form_for @shape, class: 'form-[%= type.toLowerCase() %]' do |f| %>
+		<div>
+			<%= f.hidden_field :id, class: 'id', value: '[%= id %]' %> 
+		</div>
+		<div>
+			<%= f.label :x %>
+			<%= f.text_field :x, class: 'x', value: '[%= x %]' %>
+		</div>
+		<div>
+			<%= f.label :y %>
+			<%= f.text_field :y, class: 'y', value: '[%= y %]' %>
+		</div>
+		<div>
+			<%= f.label :width %>
+			<%= f.text_field :width, class: 'width', value: '[%= width %]' %>
+		</div>
+		<div>
+			<%= f.label :height %>
+			<%= f.text_field :height, class: 'height', value: '[%= height %]' %>
+		</div>
+		<div>
+			<%= f.submit 'Update [%= type %]' %>
+		</div>
+	<% end %>
+</script>

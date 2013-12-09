@@ -6,12 +6,8 @@
 
 <% #link_to 'Destroy', shape, method: :delete, data: { confirm: 'Are you sure?' } %>
 
-<script type="text/template" id="circle-template">
-	<strong>[%= type %]</strong> (<span>[%= x %]<span>, <span>[%= y %]</span>) Radius: [%= radius %]
-</script>
-<script type="text/template" id="rectangle-template">
-	<strong>[%= type %]</strong> (<span>[%= x %]<span>, <span>[%= y %]</span>) Dimensions: [%= width %]x[%= height %]
-</script>
+<%= render 'shapes/templates/circle' %>
+<%= render 'shapes/templates/rectangle' %>
 
 <ol id="shapes">
 	

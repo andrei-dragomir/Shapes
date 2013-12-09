@@ -70,6 +70,6 @@ class ShapesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shape_params
-      params[:shape].permit(:x, :y, :commit, :radius, :width, :height, :type)
+      params[:shape].permit(:id, :x, :y, :commit, :radius, :width, :height, :type)
     end
 end

@@ -1,5 +1,5 @@
 json.array!(@shapes) do |shape|
-	json.extract! shape, :x, :y, :type
+	json.extract! shape, :id, :x, :y, :type
 	if shape.type == "Circle"
 		json.extract! shape, :radius
 	elsif shape.type == "Rectangle"

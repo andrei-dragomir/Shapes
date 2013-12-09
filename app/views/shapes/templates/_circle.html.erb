@@ -1,0 +1,27 @@
+<script type="text/template" id="circle-template">
+	
+	<div class="info">	
+		<strong>[%= type %]</strong> (<span>[%= x %]<span>, <span>[%= y %]</span>) Radius: [%= radius %]
+	</div>
+	
+	<%= form_for @shape, class: 'form-[%= type.toLowerCase() %]' do |f| %>
+		<div>
+			<%= f.hidden_field :id, class: 'id', value: '[%= id %]' %> 
+		</div>
+		<div>
+			<%= f.label :x %>
+			<%= f.text_field :x, class: 'x', value: '[%= x %]' %>
+		</div>
+		<div>
+			<%= f.label :y %>
+			<%= f.text_field :y, class: 'y', value: '[%= y %]' %>
+		</div>
+		<div>
+			<%= f.label :radius %>
+			<%= f.text_field :radius, class: 'radius', value: '[%= radius %]' %>
+		</div>
+		<div>
+			<%= f.submit 'Update [%= type %]' %>
+		</div>
+	<% end %>
+</script>
