@@ -145,8 +145,8 @@ class CanvasView extends Backbone.View
 		@color = 'blue'
 		@highlightColor = 'red'
 		@context.lineWidth = 1.5
-		originalWidth = 640
-		originalHeight = 480
+		originalWidth = 6400
+		originalHeight = 4800
 
 		@ratio = @options.ratio || 1
 
@@ -161,16 +161,16 @@ class CanvasView extends Backbone.View
 
 	drawShape: (shape, fill = false) ->
 		if shape.get('type') is 'Circle' 
-			@circle shape.get('x') * @ratio, shape.get('y') * @ratio, shape.get('radius') * @ratio, fill
+			@circle Math.round(shape.get('x') * @ratio), Math.round(shape.get('y') * @ratio), Math.round(shape.get('radius') * @ratio), fill
 		else
-			@rectangle shape.get('x') * @ratio, shape.get('y') * @ratio, shape.get('width') * @ratio, shape.get('height') * @ratio, fill
+			@rectangle Math.round(shape.get('x') * @ratio), Math.round(shape.get('y') * @ratio), Math.round(shape.get('width') * @ratio), Math.round(shape.get('height') * @ratio), fill
 
 	clearShape: (shape) ->
 		@context.lineWidth = 3.5
 		if shape.get('type') is 'Circle' 
-			@clearCircle shape.previous('x') * @ratio, shape.previous('y') * @ratio, shape.previous('radius') * @ratio
+			@clearCircle Math.round(shape.previous('x') * @ratio), Math.round(shape.previous('y') * @ratio), Math.round(shape.previous('radius') * @ratio)
 		else
-			@clearRectangle shape.previous('x') * @ratio, shape.previous('y') * @ratio, shape.previous('width') * @ratio, shape.previous('height') * @ratio
+			@clearRectangle Math.round(shape.previous('x') * @ratio), Math.round(shape.previous('y') * @ratio), Math.round(shape.previous('width') * @ratio), Math.round(shape.previous('height') * @ratio)
 		@context.lineWidth = 1.5
 
 	redrawShape: (shape) ->
@@ -223,14 +223,14 @@ scaledCanvasContainer = $('#scaled-canvas-container')
 originalCanvasContainer = $('#original-canvas-container')
 
 # create canvases of different sizes
-canvasView = new CanvasView
-mediumCanvasView = new CanvasView ratio: 2
-largeCanvasView = new CanvasView ratio: 10
+canvasView = new CanvasView ratio: 0.1
+# mediumCanvasView = new CanvasView ratio: 0.2
+originalCanvasView = new CanvasView
 
 # insert canvases into the DOM
-originalCanvasContainer.append canvasView.render().el
-scaledCanvasContainer.append '<h2>2x</h2>', mediumCanvasView.render().el
-scaledCanvasContainer.append '<h2>10x</h2>', largeCanvasView.render().el
+scaledCanvasContainer.append canvasView.render().el
+# scaledCanvasContainer.append '<h2>0.2x</h2>', mediumCanvasView.render().el
+originalCanvasContainer.append '<h2>Original size (6400x4800)</h2>', originalCanvasView.render().el
 
 # init the interface and fetch shapes from the server
 appView = new AppView el: 'body'
