@@ -1,4 +1,7 @@
 
+CANVAS_WIDTH = 6400
+CANVAS_HEIGHT = 4800
+
 # change underscore template delimiters since they're the same as ERB
 _.templateSettings =
 	interpolate: /\[\%\=(.+?)\%\]/g
@@ -27,9 +30,27 @@ class Shape extends Backbone.Model
 		height: null
 		type: null
 
-	# override toJSON to match Rails namespaced JSON approach
-	# toJSON: ->
-	# 	shape: _.clone( @attributes )
+	validate: ->
+		errors = []
+		unless typeof @get('x') is 'number'
+			errors.push "x should be a positive number"
+		unless typeof @get('y') is 'number'
+			errors.push "y should be a positive number"
+
+		unless (@get('type') is 'Circle' and @isValidCircle()) or (@get('type') is 'Rectangle' and @isValidRectangle())
+			errors.push "Shapes should be in the space #{CANVAS_WIDTH}x#{CANVAS_HEIGHT}"
+
+		if errors.length > 0
+			# collection.create doesn't trigger an error if validation fails, so treat the error somewhere else (AppView)
+			# http://stackoverflow.com/questions/8572937/bind-to-error-event-of-a-model-created-by-collection-create
+			vent.trigger 'error', errors
+			return errors
+
+	isValidCircle: ->
+		@get('x') - @get('radius') > 0 and @get('x') + @get('radius') < CANVAS_WIDTH and @get('y') - @get('radius') > 0 and @get('y') + @get('radius') < CANVAS_HEIGHT
+
+	isValidRectangle: ->
+		@get('x') > 0 and @get('x') + @get('width') < CANVAS_WIDTH and @get('y') > 0 and @get('y') + @get('height') < CANVAS_HEIGHT
 
 
 class ShapesCollection extends Backbone.Collection
@@ -82,9 +103,10 @@ class ShapeView extends Backbone.View
 		e.preventDefault()
 		@model.destroy wait: true
 
-	removeShape: ->
-		vent.trigger 'clear', @model
-		@remove()
+	removeShape: (model) ->
+		if confirm 'Are you sure?'
+			@remove()
+			vent.trigger 'erase', model
 
 	refresh: ->
 		@render()
@@ -105,6 +127,9 @@ class AppView extends Backbone.View
 		@formRectangle = @$('.form-new-rectangle')
 
 		@listenTo @shapesCollection, 'add', @renderShape
+
+		# alert errors thrown by model validation
+		@listenTo vent, 'error', @error
 
 		@shapesCollection.fetch()
 
@@ -128,6 +153,12 @@ class AppView extends Backbone.View
 	createRectangle: (e) ->
 		e.preventDefault()
 		@createShape @formRectangle
+
+	error: (errors) ->
+		if typeof errors is 'string'
+			alert errors
+		else if typeof errors is 'object' # typeof array returns 'object' in javascript :|
+			alert error for error in errors
 		
 
 
@@ -145,32 +176,60 @@ class CanvasView extends Backbone.View
 		@color = 'blue'
 		@highlightColor = 'red'
 		@context.lineWidth = 1.5
-		originalWidth = 6400
-		originalHeight = 4800
+		@originalWidth = CANVAS_WIDTH
+		@originalHeight = CANVAS_HEIGHT
 
 		@ratio = @options.ratio || 1
 
 		@$el.attr 
-			width: @ratio * originalWidth
-			height: @ratio * originalHeight
+			width: @ratio * @originalWidth
+			height: @ratio * @originalHeight
 
 		@listenTo vent, 'draw', @drawShape
 		@listenTo vent, 'highlight', @highlightShape
 		@listenTo vent, 'redraw', @redrawShape
 		@listenTo vent, 'clear', @clearShape
+		@listenTo vent, 'erase', @eraseShape
 
 	drawShape: (shape, fill = false) ->
+		x = Math.round(shape.get('x') * @ratio)
+		y = Math.round(shape.get('y') * @ratio)
 		if shape.get('type') is 'Circle' 
-			@circle Math.round(shape.get('x') * @ratio), Math.round(shape.get('y') * @ratio), Math.round(shape.get('radius') * @ratio), fill
+			radius = Math.round(shape.get('radius') * @ratio)
+			@circle x, y, radius, fill
 		else
-			@rectangle Math.round(shape.get('x') * @ratio), Math.round(shape.get('y') * @ratio), Math.round(shape.get('width') * @ratio), Math.round(shape.get('height') * @ratio), fill
+			width = Math.round(shape.get('width') * @ratio)
+			height = Math.round(shape.get('height') * @ratio)
+			@rectangle x, y, width, height, fill
 
 	clearShape: (shape) ->
 		@context.lineWidth = 3.5
+		x = Math.round(shape.previous('x') * @ratio)
+		y = Math.round(shape.previous('y') * @ratio)
+		
 		if shape.get('type') is 'Circle' 
-			@clearCircle Math.round(shape.previous('x') * @ratio), Math.round(shape.previous('y') * @ratio), Math.round(shape.previous('radius') * @ratio)
+			radius = Math.round(shape.previous('radius') * @ratio)
+			@clearCircle x, y, radius
 		else
-			@clearRectangle Math.round(shape.previous('x') * @ratio), Math.round(shape.previous('y') * @ratio), Math.round(shape.previous('width') * @ratio), Math.round(shape.previous('height') * @ratio)
+			width = Math.round(shape.previous('width') * @ratio)
+			height = Math.round(shape.previous('height') * @ratio)
+			@clearRectangle x, y, width, height
+
+		@context.lineWidth = 1.5
+
+	eraseShape: (shape) ->
+		@context.lineWidth = 3.5
+		x = Math.round(shape.get('x') * @ratio)
+		y = Math.round(shape.get('y') * @ratio)
+		
+		if shape.get('type') is 'Circle' 
+			radius = Math.round(shape.get('radius') * @ratio)
+			@clearCircle x, y, radius
+		else
+			width = Math.round(shape.get('width') * @ratio)
+			height = Math.round(shape.get('height') * @ratio)
+			@clearRectangle x, y, width, height
+
 		@context.lineWidth = 1.5
 
 	redrawShape: (shape) ->
@@ -224,12 +283,10 @@ originalCanvasContainer = $('#original-canvas-container')
 
 # create canvases of different sizes
 canvasView = new CanvasView ratio: 0.1
-# mediumCanvasView = new CanvasView ratio: 0.2
 originalCanvasView = new CanvasView
 
 # insert canvases into the DOM
 scaledCanvasContainer.append canvasView.render().el
-# scaledCanvasContainer.append '<h2>0.2x</h2>', mediumCanvasView.render().el
 originalCanvasContainer.append '<h2>Original size (6400x4800)</h2>', originalCanvasView.render().el
 
 # init the interface and fetch shapes from the server
