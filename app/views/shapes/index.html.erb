@@ -15,6 +15,15 @@
 <%= render 'form', type: "Circle" %>
 <%= render 'form', type: "Rectangle" %>
 
+<div class="import">
+	<h2>Import Shapes from CSV</h2>
+
+	<%= form_tag import_shapes_path, multipart: true do %>
+		<%= file_field_tag :file %>
+		<%= submit_tag "Import" %>
+	<% end %>
+</div>
+
 <div id="scaled-canvas-container">
 </div>
 

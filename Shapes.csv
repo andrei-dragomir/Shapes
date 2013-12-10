@@ -1,0 +1,3 @@
+x,y,radius,width,height,type
+20,40,50,,,Circle
+30,100,,20,40,Rectangle

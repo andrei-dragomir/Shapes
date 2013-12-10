@@ -26,7 +26,6 @@ class ShapesController < ApplicationController
   # POST /shapes.json
   def create
     @shape = Shape.new(shape_params)
-    logger.debug shape_params.inspect
 
     respond_to do |format|
       if @shape.save
@@ -61,6 +60,12 @@ class ShapesController < ApplicationController
       format.html { redirect_to shapes_url }
       format.json { head :no_content }
     end
+  end
+
+  # POST /shapes/import
+  def import
+    Shape.import(params[:file])
+    redirect_to shapes_url, notice: "Shapes imported."
   end
 
   private

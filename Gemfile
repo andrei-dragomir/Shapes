@@ -27,6 +27,9 @@ gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
+# Ruby Gem for smarter importing of CSV Files as Array(s) of Hashes. Read more: https://github.com/tilo/smarter_csv
+gem 'smarter_csv'
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
